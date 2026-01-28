@@ -38,8 +38,8 @@ const cameraKeyframes: CameraKeyframe[] = [
     scrollStart: 2000
   },
   {
-    position: [0, 0, 0],
-    rotation: [degToRad(0), degToRad(0), degToRad(0)],
+    position: [-16.315, 14.129, -20.198],
+    rotation: [degToRad(-144.59), degToRad(-45.55), degToRad(-153.09)],
     scrollStart: 3000
   }
 ]
