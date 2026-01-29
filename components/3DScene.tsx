@@ -1,10 +1,13 @@
 "use client";
 import React from 'react'
-import { Canvas } from '@react-three/fiber'
+import { useRef } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Boat } from "./Boat";
-import { CameraControls } from '@react-three/drei'
+import { CameraControls, Sky } from '@react-three/drei'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Background from 'three/src/renderers/common/Background.js';
+import { Sphere, Euler } from 'three';
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -33,8 +36,8 @@ const cameraKeyframes: CameraKeyframe[] = [
     scrollStart: 1000
   },
   {
-    position: [-20, 20, 0],
-    rotation: [degToRad(-60), degToRad(-90), degToRad(0)],
+    position: [2.427, -6.013, 8.206],
+    rotation: [degToRad(-16), degToRad(-4.33), degToRad(2.1)],
     scrollStart: 2000
   },
   {
@@ -45,16 +48,18 @@ const cameraKeyframes: CameraKeyframe[] = [
 ]
 
 function CameraAnimation() {
-  const cameraControlsRef = React.useRef<any>(null)
+  const { camera } = useThree()
   
   React.useEffect(() => {
-    if (!cameraControlsRef.current) return;
+    if (!camera) return;
 
     ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
     // Initialize camera to first keyframe
     const firstKeyframe = cameraKeyframes[0]
-    cameraControlsRef.current?.setPosition(firstKeyframe.position[0], firstKeyframe.position[1], firstKeyframe.position[2], false)
+    camera.position.set(firstKeyframe.position[0], firstKeyframe.position[1], firstKeyframe.position[2])
+    camera.rotation.order = 'YXZ'
+    camera.rotation.set(firstKeyframe.rotation[0], firstKeyframe.rotation[1], firstKeyframe.rotation[2])
 
     const sections = document.querySelectorAll('section')
 
@@ -77,7 +82,12 @@ function CameraAnimation() {
             const y = gsap.utils.interpolate(currentKeyframe.position[1], nextKeyframe.position[1])(progress)
             const z = gsap.utils.interpolate(currentKeyframe.position[2], nextKeyframe.position[2])(progress)
             
-            cameraControlsRef.current?.setPosition(x, y, z, false)
+            const rotX = gsap.utils.interpolate(currentKeyframe.rotation[0], nextKeyframe.rotation[0])(progress)
+            const rotY = gsap.utils.interpolate(currentKeyframe.rotation[1], nextKeyframe.rotation[1])(progress)
+            const rotZ = gsap.utils.interpolate(currentKeyframe.rotation[2], nextKeyframe.rotation[2])(progress)
+            
+            camera.position.set(x, y, z)
+            camera.rotation.set(rotX, rotY, rotZ)
           }
         }
       })
@@ -86,9 +96,35 @@ function CameraAnimation() {
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, []);
+  }, [camera]);
 
-  return <CameraControls ref={cameraControlsRef} />
+  return null
+}
+
+function InteractiveMesh() {
+  const meshRef = useRef<any>(null);
+  console.log("Rendering InteractiveMesh");
+
+  const handleHover = () => {
+    console.log("START");
+    if (!meshRef.current) return;
+    console.log("HOVERED");
+    
+    gsap.to(meshRef.current.material.color, {
+      r: 1, // Target Red
+      g: 0, // Target Green
+      b: 0, // Target Blue
+      duration: 1,
+      ease: 'power2.inOut',
+    })
+  }
+
+  return (
+    <mesh ref={meshRef} onPointerOver={handleHover}>
+      <boxGeometry />
+      <meshStandardMaterial color="blue" />
+    </mesh>
+  )
 }
 
 export default function Render3DScene() {
@@ -108,6 +144,8 @@ export default function Render3DScene() {
         far: 1000,
       }}
     >
+      <InteractiveMesh />
+      
       <CameraAnimation />
       <Boat />
       
