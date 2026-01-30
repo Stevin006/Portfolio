@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <>
     
-    <section className="min-h-screen w-full pt-40 px-8 md:px-16 lg:px-10 dark:bg-gradient-to-t from-cyan-300 to-cyan-500 text-white">
+    <section className="min-h-screen w-full pt-40 px-8 md:px-16 lg:px-10 dark:bg-gradient-to-t from-blue-800 to-cyan-800 text-white snap-start">
       <div className="flex flex-col md:flex-row items-start justify-between gap-12 max-w-7xl mx-auto">
         
         <div className="flex-3 space-y-4 md:mt-10">

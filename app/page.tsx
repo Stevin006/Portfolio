@@ -7,15 +7,16 @@ import Projects from "./projects";
 //
 export default function Home() {
   return (
-    <>
-    <div className="fixed inset-0 -z-10">
-        <Render3DScene/>
+    <div className="snap-y snap-mandatory h-screen overflow-y-scroll">
+      <div className="fixed inset-0 -z-10">
+          <Render3DScene/>
+      </div>
+      <Hero/>
+      <About/>
+      <section className="h-screen snap-start"> Fishing Line Animation, once ended automatically move</section>
+      <Experience/>
+      <Projects/>
     </div>
-    <Hero/>
-    <About/>
-    <Experience/>
-    <Projects/>
-    </>
   );
   //<Experience/>
    // <Projects/>
